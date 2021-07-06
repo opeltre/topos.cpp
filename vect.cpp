@@ -6,10 +6,10 @@ using namespace std;
 
 typedef double dtype;
 
-template <size_t n, typename T=dtype>
+template <size_t n, typename T=dtype> 
 struct Vect;
 
-template <size_t n, typename T=dtype>
+template <size_t n, typename T>
 Vect<n, T> operator + (const Vect<n, T>& lhs, const Vect<n, T>& rhs);
 
 template <size_t n, typename T> 
@@ -83,8 +83,7 @@ struct Vect {
     Vect& operator += (T b) {
         return fmap([&] (T ai) {return ai + b;});
     }
-    // pure
-    friend Vect operator +<n,T>(const Vect& a, const Vect& b);
+    friend Vect operator +<n, T>(const Vect& a, const Vect& b);
     /*
     Vect operator + (Vect& b) {
         return Vect([&] (size_t i) {return values[i] + b[i];});
@@ -150,10 +149,13 @@ struct Vect {
     }
 };
 
+
+/*
 template <size_t n, typename T=dtype>
 Vect<n, T> operator + (const Vect<n, T>&& a, const Vect<n, T>&& b) {
     return Vect([&] (size_t i) {return a[i] + b[i];});
 }
+*/
 
 
 /* ------ ranges ------ */

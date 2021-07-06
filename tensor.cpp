@@ -52,8 +52,10 @@ struct Shape<n, ns...> {
 template<typename shape, typename T=dtype> 
 struct Tensor : public Vect<shape::size, T> {
 
+    Tensor () {}
+
     Tensor (Vect<shape::size, T>& val) 
-        { values = &}
+        {this->values = val.values;}
 
     static constexpr size_t dim = shape::dim;
     static constexpr size_t size = shape::size;
@@ -83,6 +85,8 @@ struct Tensor : public Vect<shape::size, T> {
 
 };
 
+/*--- show ---*/
+
 template <typename shape, typename T=dtype> 
 string to_string (Tensor<shape,T> v) {
     size_t n = shape::size;
@@ -93,8 +97,6 @@ string to_string (Tensor<shape,T> v) {
     }
     return str;
 }
-
-/*--- show ---*/
 
 
 int main () {

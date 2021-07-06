@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <concepts>
 #include "vect.cpp"
 
 using namespace std;
@@ -10,7 +11,15 @@ Value& log (string s, Value& v) {
             << s << endl 
             << to_string(v) << endl << endl;
     return v;
-}
+};
+
+template<typename V, int n, typename T>
+concept Vector = derived_from<V, Vect<n, T>>;
+
+template <int n, typename T, Vector<n, T> V>
+V operator + (const V& lhs, const V& rhs) {
+    return V([&] (int i) {return lhs[i] + rhs[i];});
+};
 
 int main () {
 
@@ -19,7 +28,8 @@ int main () {
 
     cout << "Examples in Vect<6>:" << endl;
 
-    Vect<n> u = linspace<n>(0.0, 1.0);
+    Vect<n> u ([&] (size_t i) {return (_t)i / (_t)n;});
+    //Vect<n> u = linspace<n>(0.0, 1.0);
     log("u = linspace<n>(0, 1)", u); 
 
     // f = (*n) 
@@ -49,6 +59,9 @@ int main () {
 
     w /= 100;
     log("w /= 100", w);
+    
+//    Vect<n> sum2 = u + w;
+//    log("u+w", sum2);
 
     return 0;
 }
