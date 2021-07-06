@@ -37,7 +37,7 @@ struct Vect {
   
     /* --- Access --- */ 
 
-    T& operator [] (size_t i) {
+    T operator [] (size_t i) const {
         return values[i];
     }
 
@@ -83,8 +83,8 @@ struct Vect {
     Vect& operator += (T b) {
         return fmap([&] (T ai) {return ai + b;});
     }
-    friend Vect operator +<n, T>(const Vect& a, const Vect& b);
     /*
+    friend Vect operator +<n, T>(const Vect& a, const Vect& b);
     Vect operator + (Vect& b) {
         return Vect([&] (size_t i) {return values[i] + b[i];});
     }
@@ -178,15 +178,9 @@ using F_Vect = function<Vect<n, T> (Vect<n, S>)>;
 
 template <size_t n, typename S=dtype, typename T=S>
 F_Vect<n, S, T> fmap (function<T(S)> f) {
-    F_Vect<n, S, T> F; 
-    F = [&] (Vect<n, S> v) {
-        Vect<n, T> Fv;
-        for (size_t i = 0; i < n; i++) {
-            Fv[i] = f(v[i]);
-        }
-        return Fv;
+    return [&] (Vect<n, S> v) {
+        return Vect<n, T> ([&] (size_t i) {return f(v[i]);});
     };
-    return F;
 }
 
 /* ------ zipWith ------ */
