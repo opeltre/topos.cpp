@@ -2,17 +2,13 @@
 #include <functional> 
 #include <string> 
 
+#include "alg.h"
+
 using namespace std;
 
 typedef double dtype;
 
 template <size_t n, typename T=dtype> 
-struct Vect;
-
-template <size_t n, typename T>
-Vect<n, T> operator + (const Vect<n, T>& lhs, const Vect<n, T>& rhs);
-
-template <size_t n, typename T> 
 struct Vect {
     
     using type = Vect<n, T>;
@@ -32,7 +28,7 @@ struct Vect {
             values[i] = f(i);
         }
     }
-    
+
     T values [n];
   
     /* --- Access --- */ 
@@ -64,7 +60,7 @@ struct Vect {
         return *this;
     }
     
-    template <typename T2>
+    template <typename T2=T>
     Vect& zipWith (Vect<n, T2> b, function<T(T, T2)> f) {
         for (size_t i = 0; i < n; i++) {
             values[i] = f(values[i], b[i]);
@@ -77,20 +73,8 @@ struct Vect {
     //      +       //
 
     // in place
-    Vect& operator += (Vect& b) {
-        return zipWith<T>(b, [&] (T ai, T bi) {return ai + bi;});
-    }
     Vect& operator += (T b) {
         return fmap([&] (T ai) {return ai + b;});
-    }
-    /*
-    friend Vect operator +<n, T>(const Vect& a, const Vect& b);
-    Vect operator + (Vect& b) {
-        return Vect([&] (size_t i) {return values[i] + b[i];});
-    }
-    */
-    Vect operator + (T b) {
-        return Vect([&] (size_t i) {return values[i] + b;});
     }
 
     //      -       // 
@@ -103,16 +87,6 @@ struct Vect {
         return fmap([&] (T ai) {return ai - b;});
     }
     // pure
-    Vect operator - (Vect& b) const {
-        return Vect([&] (size_t i) {return values[i] - b[i];});
-    }
-    Vect operator - (T b) const {
-        return Vect([&] (size_t i) {return values[i] - b;});
-    }
-    Vect operator - () const {
-        return Vect([&] (size_t i) {return -values[i];});
-    }
-
     //      *       //
     
     // in place
@@ -123,13 +97,6 @@ struct Vect {
         return fmap([&] (T ai) {return ai * b;});
     }
 
-    // pure
-    Vect operator * (Vect&& b) const {
-        return Vect([&] (size_t i) {return values[i] * b[i];});
-    }
-    Vect operator * (T b) const {
-        return Vect([&] (size_t i) {return values[i] * b;});
-    }
 
     //      /       // 
 
@@ -140,23 +107,7 @@ struct Vect {
     Vect& operator /= (T b) {
         return fmap([&] (T ai) {return ai / b;});
     }
-    // pure
-    Vect operator / (Vect& b) const {
-        return Vect([&] (size_t i) {return values[i] / b[i];});
-    }
-    Vect operator / (T b) const {
-        return Vect([&] (size_t i) {return values[i] / b;});
-    }
 };
-
-
-/*
-template <size_t n, typename T=dtype>
-Vect<n, T> operator + (const Vect<n, T>&& a, const Vect<n, T>&& b) {
-    return Vect([&] (size_t i) {return a[i] + b[i];});
-}
-*/
-
 
 /* ------ ranges ------ */
 

@@ -1,13 +1,12 @@
 #include <iostream>
 #include <string>
 #include <concepts>
-#include "vect.cpp"
-#include "alg.cpp"
+#include "vect.h"
 
 using namespace std;
 
 template<typename Value>
-Value& log (string s, Value& v) {
+Value& log (string s, Value&& v) {
     cout    << endl
             << s << endl 
             << to_string(v) << endl << endl;
@@ -47,11 +46,13 @@ int main () {
     u += v;
     log("u += v", u);
    
-    Vect<n> w = (-u + 2) * (v + 1); 
-    log("w = (-u + 2) * (v + 1)", w);
+    Vect<n> w = (u - 2) * (1.0 + v); 
+    log("w = (-u + 2) * (1 + v)", w);
 
     w /= 100;
     log("w /= 100", w);
+
+    log("- w", -w);
     
     Vect<n> sum2 = u + w;
     log("u+w", sum2);

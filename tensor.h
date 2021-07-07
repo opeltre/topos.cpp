@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <cstdarg>
 
-#include "vect.cpp"
+#include "vect.h"
 
 using namespace std;
 
