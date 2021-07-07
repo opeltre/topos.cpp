@@ -2,6 +2,7 @@
 #include <string>
 #include <concepts>
 #include "vect.h"
+#include "tensor.h"
 
 using namespace std;
 
@@ -56,6 +57,28 @@ int main () {
     
     Vect<n> sum2 = u + w;
     log("u+w", sum2);
+
+    // TENSORS // 
+    
+    cout << "Tensors:" << endl << endl;
+
+    typedef Shape<3, 3, 3> X;
+    Tensor<X> t;
+
+    cout << "t.dim \t: "
+        << t.dim << endl;
+    cout << "t.size \t: "
+        << t.size << endl;
+
+    t.map([&] (double x, size_t i) {return (double)i / t.dim;});
+    cout << "t \t: "
+        << to_string(t) << endl;
+
+    cout << "t(0, 2, 2)\t:"
+        << t(0, 2, 2) << endl;
+    
+    cout << "t + t\t:"  
+        << to_string(t + t) << endl;
 
     return 0;
 }

@@ -4,8 +4,6 @@
 #include <type_traits>
 #include <cstdarg>
 
-#include "vect.h"
-
 using namespace std;
 
 /*------ Shape ------*/
@@ -52,10 +50,7 @@ struct Shape<n, ns...> {
 template<typename shape, typename T=dtype> 
 struct Tensor : public Vect<shape::size, T> {
 
-    Tensor () {}
-
-    Tensor (Vect<shape::size, T>& val) 
-        {this->values = val.values;}
+    using Vect<shape::size, T>::Vect;
 
     static constexpr size_t dim = shape::dim;
     static constexpr size_t size = shape::size;
@@ -96,25 +91,4 @@ string to_string (Tensor<shape,T> v) {
         str += (i == n  - 1 ?  "]" : ", ");
     }
     return str;
-}
-
-
-int main () {
-    typedef Shape<3, 3, 3> X;
-    Tensor<X> t;
-
-    cout << "t.dim \t: "
-        << t.dim << endl;
-    cout << "t.size \t: "
-        << t.size << endl;
-
-    t.map([&] (double x, size_t i) {return (double)i / t.dim;});
-    cout << "t \t: "
-        << to_string(t) << endl;
-
-    cout << "t(0, 2, 2)\t:"
-        << t(0, 2, 2) << endl;
-
-    cout << to_string(t + t) << endl;
-    return 0;
 }

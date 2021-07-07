@@ -67,46 +67,6 @@ struct Vect {
         }
         return *this;
     }
-
-    /* --- Arithmetic --- */
-   
-    //      +       //
-
-    // in place
-    Vect& operator += (T b) {
-        return fmap([&] (T ai) {return ai + b;});
-    }
-
-    //      -       // 
-
-    // in place
-    Vect& operator -= (Vect& b) {
-        return zipWith<T>(b, [&] (T ai, T bi) {return ai - bi;});
-    }
-    Vect& operator -= (T b) {
-        return fmap([&] (T ai) {return ai - b;});
-    }
-    // pure
-    //      *       //
-    
-    // in place
-    Vect& operator *= (Vect& b) {
-        return zipWith<T>(b, [&] (T ai, T bi) {return ai * bi;});
-    }
-    Vect& operator *= (T b) {
-        return fmap([&] (T ai) {return ai * b;});
-    }
-
-
-    //      /       // 
-
-    // in place
-    Vect& operator /= (Vect& b) {
-        return zipWith<T>(b, [&] (T ai, T bi) {return ai / bi;});
-    }
-    Vect& operator /= (T b) {
-        return fmap([&] (T ai) {return ai / b;});
-    }
 };
 
 /* ------ ranges ------ */
