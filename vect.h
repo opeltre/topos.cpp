@@ -17,7 +17,7 @@ struct Vect {
 
     Vect () {}
 
-    Vect (T& val) : values(val) {}
+    Vect (T* val) : values(val) {}
 
     Vect (initializer_list<T> val) {
         copy(val.begin(), val.end(), values);
