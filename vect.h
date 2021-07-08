@@ -10,8 +10,6 @@ typedef double dtype;
 
 template <size_t n, typename T=dtype> 
 struct Vect {
-    
-    using type = Vect<n, T>;
 
     /* --- Constructors --- */
 
@@ -20,17 +18,29 @@ struct Vect {
     Vect (T* val) : values(val) {}
 
     Vect (initializer_list<T> val) {
+        allocate();
         copy(val.begin(), val.end(), values);
     }
 
     Vect (function<T(size_t)> f) {
+        allocate();
         for (size_t i = 0; i < n; i++) {
             values[i] = f(i);
         }
     }
 
-    T values [n];
-  
+    T* values; 
+
+    /* --- Memory --- */
+
+    void allocate () {
+        values = (T*)malloc(n * sizeof(T));
+    }
+
+    void operator~ () {
+        free(values);
+    }
+
     /* --- Access --- */ 
 
     T operator [] (size_t i) const {
@@ -101,15 +111,9 @@ using F2_Vect = function<Vect<n, T> (Vect<n, S1>, Vect<n, S2>)>;
 
 template <size_t n, typename S1=dtype, typename S2=S1, typename T=S1> 
 F2_Vect<n, S1, S2, T> zipWith (function<T(S1, S2)> f) {
-    F2_Vect<n, S1, S2, T> F;
-    F = [&] (Vect<n, S1> v1, Vect<n, S2> v2) {
-        Vect<n, T> Fv; 
-        for (size_t i = 0; i < n; i++) {
-            Fv.values[i] = f(v1.values[i], v2.values[i]);
-        }
-        return Fv;
+    return [&] (Vect<n, S1> v1, Vect<n, S2> v2) {
+        return Vect<n, T> ([&] (size_t i) {return f(v1[i], v2[i]);});
     };
-    return F;
 }
 
 /* ------ show ------ */ 

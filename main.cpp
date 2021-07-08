@@ -69,7 +69,8 @@ int main () {
         << t.dim << endl;
     cout << "t.size \t: "
         << t.size << endl;
-
+    
+    t.allocate();
     t.map([&] (double x, size_t i) {return (double)i / t.dim;});
     cout << "t \t: "
         << to_string(t) << endl;
