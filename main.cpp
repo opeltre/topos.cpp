@@ -7,7 +7,7 @@
 using namespace std;
 
 template<typename Value>
-Value& log (string s, Value&& v) {
+const Value& log (string s, const Value& v) {
     cout    << endl
             << s << endl 
             << to_string(v) << endl << endl;
@@ -70,7 +70,6 @@ int main () {
     cout << "t.size \t: "
         << t.size << endl;
     
-    t.allocate();
     t.map([&] (double x, size_t i) {return (double)i / t.dim;});
     cout << "t \t: "
         << to_string(t) << endl;

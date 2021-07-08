@@ -1,7 +1,7 @@
 #include <iostream>
 #include <functional> 
 #include <string> 
-
+#include "string.h"
 #include "alg.h"
 
 using namespace std;
@@ -13,9 +13,10 @@ struct Vect {
 
     /* --- Constructors --- */
 
-    Vect () {}
-
-    Vect (T* val) : values(val) {}
+    Vect () {
+        allocate();
+        cout << "> allocating empty array" << endl;
+    }
 
     Vect (initializer_list<T> val) {
         allocate();
@@ -23,6 +24,7 @@ struct Vect {
     }
 
     Vect (function<T(size_t)> f) {
+        cout << "> mapping" << endl;
         allocate();
         for (size_t i = 0; i < n; i++) {
             values[i] = f(i);
@@ -30,6 +32,26 @@ struct Vect {
     }
 
     T* values; 
+
+    /* --- Move Constructor --- */
+
+    Vect (Vect&& v) {
+        values = v.values;
+        v.values = nullptr;
+        cout << "> moving" << endl;
+    }
+    Vect (Vect& v) {
+        allocate();
+        memcpy(values, v.values, n * sizeof(T));
+        cout << "> copying" << endl;
+    }
+
+    /* --- Copy --- */
+    Vect& operator= (Vect v) {
+        cout << "> swapping" << endl;
+        swap(values, v.values);
+        return *this;
+    }
 
     /* --- Memory --- */
 
@@ -82,12 +104,12 @@ struct Vect {
 /* ------ ranges ------ */
 
 template <size_t n, typename T=dtype> 
-Vect<n, T> range () {
+Vect<n, T>& range () {
     return Vect<n, T>([] (size_t i) {return i;});
 }
 
 template <size_t n, typename T=dtype>
-Vect<n, T> linspace (T x0, T x1) {
+Vect<n, T>& linspace (T x0, T x1) {
     T step = (x1 - x0) / (n - 1);
     return Vect<n, T>([&] (size_t i) {return x0 + step * i;});
 }
@@ -95,11 +117,11 @@ Vect<n, T> linspace (T x0, T x1) {
 /* ------ fmap ------ */ 
 
 template <size_t n, typename S=dtype, typename T=S>
-using F_Vect = function<Vect<n, T> (Vect<n, S>)>;
+using F_Vect = function<Vect<n, T> (const Vect<n, S>&)>;
 
 template <size_t n, typename S=dtype, typename T=S>
 F_Vect<n, S, T> fmap (function<T(S)> f) {
-    return [&] (Vect<n, S> v) {
+    return [&] (const Vect<n, S>& v) {
         return Vect<n, T> ([&] (size_t i) {return f(v[i]);});
     };
 }
@@ -107,11 +129,12 @@ F_Vect<n, S, T> fmap (function<T(S)> f) {
 /* ------ zipWith ------ */
 
 template <size_t n, typename S1=dtype, typename S2=S1, typename T=S1> 
-using F2_Vect = function<Vect<n, T> (Vect<n, S1>, Vect<n, S2>)>;
+using F2_Vect = 
+    function<Vect<n, T> (const Vect<n, S1>&, const Vect<n, S2>&)>;
 
 template <size_t n, typename S1=dtype, typename S2=S1, typename T=S1> 
 F2_Vect<n, S1, S2, T> zipWith (function<T(S1, S2)> f) {
-    return [&] (Vect<n, S1> v1, Vect<n, S2> v2) {
+    return [&] (const Vect<n, S1>& v1, const Vect<n, S2>& v2) {
         return Vect<n, T> ([&] (size_t i) {return f(v1[i], v2[i]);});
     };
 }
@@ -119,7 +142,7 @@ F2_Vect<n, S1, S2, T> zipWith (function<T(S1, S2)> f) {
 /* ------ show ------ */ 
 
 template <size_t n, typename T=dtype> 
-string to_string (Vect<n,T> v) {
+string to_string (const Vect<n,T>& v) {
     string str = "Vect " + to_string(n) + " [";
     for (size_t i = 0; i < n; i++) {
         str += to_string(v.values[i]);
