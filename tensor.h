@@ -1,45 +1,40 @@
 #include <iostream>
 #include <functional> 
 #include <string> 
-#include <cstdarg>
 
 using namespace std;
 
 /*------ Tensor ------*/
 
-template<typename shape, typename T=dtype> 
-struct Tensor : public Vect<shape::size, T> {
+template<typename Domain, typename T=dtype> 
+struct Tensor : public Vect<Domain::size, T> {
 
-    using Vect<shape::size, T>::Vect;
+    using Vect<Domain::size, T>::Vect;
+    using shape = Domain;
 
-    static constexpr size_t dim = shape::dim;
-    static constexpr size_t size = shape::size;
+    static constexpr size_t dim = Domain::dim;
+    static constexpr size_t size = Domain::size;
 
-    T operator () (size_t js[dim]) {
+    /* --- Access ---*/
+    
+    template<typename Index>
+    T operator () (Index js[dim]) {
+        return this->values[shape::index(js)];
+    }
+    T operator () (initializer_list<size_t> js) {
         return this->values[shape::index(js)];
     }
 
-    T operator () (size_t js...) {
-        size_t is [dim];
-        is[0] = js;
-        va_list args;
-        va_start(args, js);
-        for (size_t d = 1; d < dim; d++) {
-            size_t i_d = va_arg(args, size_t);
-            is[d] = i_d;
-        }
-        va_end(args);
-        return this->values[shape::index(is)];
+    template<typename ... Is, std::enable_if_t<
+        sizeof...(Is) == dim 
+        &&  (convertible_to<Is, size_t> && ...), bool
+    > = true>
+    T operator () (Is ... is) {
+        size_t js [dim] = {static_cast<size_t>(is)...};
+        return this->values[shape::index(js)];
     }
 
-    T operator () (initializer_list<size_t> js) {
-        size_t is [dim];
-        copy(js.begin(), js.begin() + dim, is);
-        return this->values[shape::index(is)];
-    }
-    
 };
-
 
 /*--- show ---*/
 

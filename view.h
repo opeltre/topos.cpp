@@ -8,7 +8,6 @@ struct View {
     
     function<T(size_t)> read;
 
-
     T operator [] (size_t i) const {
         return read(i);
     };

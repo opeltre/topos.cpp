@@ -1,3 +1,6 @@
+#include <cstdarg>
+#include <type_traits>
+
 template<size_t... ns>
 struct Shape {
 
@@ -22,14 +25,39 @@ struct Shape<n, ns...> {
     };
     
     typedef size_t Index[dim];
+    
+    template<typename ... Is>
+    struct is_index {
+        typedef std::enable_if<
+                    (sizeof...(Is) == dim) 
+                &&  (same_as<Is, size_t> && ...), size_t>::type 
+        type;
+    };
 
-    // row-major index
-    static size_t index (const size_t js [dim]) {
+    //--  Row-major index --
+    
+    template<unsigned_integral Nat=size_t> 
+    static size_t index (const Nat js [dim]) {
         size_t i = js[0];
         for (size_t d = 1; d < dim; d++) {
             i = i * shape[d] + js[d];
         }
+        if ( i > size ) 
+            throw invalid_argument("out of bounds: " + to_string(i));
         return i;
     };
+
+    static size_t index (initializer_list<size_t> js) {
+        size_t is [dim];
+        copy(js.begin(), js.begin() + dim, is);
+        return index(is);
+    }
+
 };
 
+template<typename T> 
+concept MultiDim = requires (T t) {
+    requires Vector<T>;
+    { t.dim }           -> same_as<size_t>;
+    { t.shape };
+};

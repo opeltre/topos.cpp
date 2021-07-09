@@ -4,14 +4,6 @@
 
 using namespace std;
 
-template<typename Value>
-const Value& log (string s, const Value& v) {
-    cout    << endl
-            << s << endl 
-            << to_string(v) << endl << endl;
-    return v;
-};
-
 int main () {
 
     const int n=10;
