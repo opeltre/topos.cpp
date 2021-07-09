@@ -11,12 +11,17 @@ struct Tensor : public Vect<Domain::size, T> {
 
     using Vect<Domain::size, T>::Vect;
     using shape = Domain;
-
-    static constexpr size_t dim = Domain::dim;
-    static constexpr size_t size = Domain::size;
+    static constexpr size_t dim = shape::dim;
+    static constexpr size_t size = shape::size;
 
     /* --- Access ---*/
     
+    template<typename ... Is, Indices<shape, Is...> = true>
+    T operator () (Is ... is) {
+        size_t js [dim] = {static_cast<size_t>(is)...};
+        return this->values[shape::index(js)];
+    }
+
     template<typename Index>
     T operator () (Index js[dim]) {
         return this->values[shape::index(js)];
@@ -24,19 +29,6 @@ struct Tensor : public Vect<Domain::size, T> {
     T operator () (initializer_list<size_t> js) {
         return this->values[shape::index(js)];
     }
-
-    template<typename ... Is> 
-    using Indices = std::enable_if_t<
-        sizeof...(Is) == dim 
-        &&  (convertible_to<Is, size_t> && ...), bool
-    >;
-
-    template<typename ... Is, Indices<Is...> = true>
-    T operator () (Is ... is) {
-        size_t js [dim] = {static_cast<size_t>(is)...};
-        return this->values[shape::index(js)];
-    }
-
 };
 
 /*--- show ---*/

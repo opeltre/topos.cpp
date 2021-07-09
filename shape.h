@@ -25,14 +25,6 @@ struct Shape<n, ns...> {
     };
     
     typedef size_t Index[dim];
-    
-    template<typename ... Is>
-    struct is_index {
-        typedef std::enable_if<
-                    (sizeof...(Is) == dim) 
-                &&  (same_as<Is, size_t> && ...), size_t>::type 
-        type;
-    };
 
     //--  Row-major index --
     
@@ -53,11 +45,28 @@ struct Shape<n, ns...> {
         return index(is);
     }
 
+    static string show() {
+        string str = "(";
+        for (size_t i = 0; i < dim; i ++) {
+            str += to_string(shape[i]) 
+                + (i < dim - 1? ", ": ")");
+        }
+        return str;
+    }
+
 };
 
+template<typename shape, typename ... Is> 
+using Indices = std::enable_if_t<
+    sizeof...(Is) == shape::dim 
+    &&  (convertible_to<Is, size_t> && ...), bool
+>;
+
+/*
 template<typename T> 
 concept MultiDim = requires (T t) {
     requires Vector<T>;
     { t.dim }           -> same_as<size_t>;
     { t.shape };
 };
+*/

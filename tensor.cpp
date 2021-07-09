@@ -6,7 +6,7 @@ using namespace std;
 
 int main () {
 
-    const int n=10;
+    const int n=10000;
     typedef double _t;
 
     cout << "Examples in Vect<6>:" << endl;
