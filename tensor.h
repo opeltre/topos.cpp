@@ -25,10 +25,13 @@ struct Tensor : public Vect<Domain::size, T> {
         return this->values[shape::index(js)];
     }
 
-    template<typename ... Is, std::enable_if_t<
+    template<typename ... Is> 
+    using Indices = std::enable_if_t<
         sizeof...(Is) == dim 
         &&  (convertible_to<Is, size_t> && ...), bool
-    > = true>
+    >;
+
+    template<typename ... Is, Indices<Is...> = true>
     T operator () (Is ... is) {
         size_t js [dim] = {static_cast<size_t>(is)...};
         return this->values[shape::index(js)];
