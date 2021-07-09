@@ -9,6 +9,8 @@ typedef double dtype;
 
 template <size_t n, typename T=dtype> 
 struct Vect {
+    
+    static constexpr size_t size = n;
 
     /* --- Constructors --- */
 
@@ -142,10 +144,5 @@ F2_Vect<n, S1, S2, T> zipWith (function<T(S1, S2)> f) {
 
 template <size_t n, typename T=dtype> 
 string to_string (const Vect<n,T>& v) {
-    string str = "Vect " + to_string(n) + " [";
-    for (size_t i = 0; i < n; i++) {
-        str += to_string(v.values[i]);
-        str += (i == n  - 1 ?  "]" : ", ");
-    }
-    return str;
+    return "Vect " + to_string(n) + " " + _str(v);
 }

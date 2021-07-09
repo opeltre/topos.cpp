@@ -1,5 +1,6 @@
 #include <concepts>
 #include <utility>
+#include <functional>
 
 using namespace std;
 
@@ -7,9 +8,10 @@ template<class T, class Index=size_t>
 using Items = decltype(declval<T>()[declval<Index>()]);
 
 template<typename V>
-concept Vector = requires(V const& v) {
+concept Vector = requires(V const& v, function<Items<V>(size_t)> f) {
     typename Items<V const&>;
-    { V(declval<Items<V const&>(*)(size_t)>()) };
+    { V(f) };
+    { v.size } -> convertible_to<size_t>;
 };
 
 /*---  - V  ---*/
