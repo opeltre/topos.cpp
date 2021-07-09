@@ -1,8 +1,7 @@
 #include <iostream>
 #include <string>
 #include <concepts>
-#include "vect.h"
-#include "tensor.h"
+#include "main.h"
 
 using namespace std;
 

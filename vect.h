@@ -2,7 +2,6 @@
 #include <functional> 
 #include <string> 
 #include "string.h"
-#include "alg.h"
 
 using namespace std;
 

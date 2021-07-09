@@ -3,8 +3,6 @@
 #include <string> 
 #include <cstdarg>
 
-#include "shape.h"
-
 using namespace std;
 
 /*------ Tensor ------*/
@@ -16,7 +14,7 @@ struct Tensor : public Vect<shape::size, T> {
 
     static constexpr size_t dim = shape::dim;
     static constexpr size_t size = shape::size;
-     
+
     T operator () (size_t js[dim]) {
         return this->values[shape::index(js)];
     }
@@ -39,6 +37,7 @@ struct Tensor : public Vect<shape::size, T> {
         copy(js.begin(), js.begin() + dim, is);
         return this->values[shape::index(is)];
     }
+    
 };
 
 
