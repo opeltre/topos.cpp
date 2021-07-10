@@ -29,7 +29,7 @@ int main () {
 
     //--- Equivalent to `s = sum(t)`: ---
 
-    int s = foldl([&] (int ai, int bi) {return ai + bi;});
+    int s = foldl([&] (int ai, int bi) {return ai + bi;})(v);
 
     cout << s << endl;
 
