@@ -16,16 +16,14 @@ Build and run tests with `$ make test`.
  
 # include "topos.h"
 
-using namespace topos;
-
 int main () {
     
-    typedef Shape<3, 3> X;
-    typedef Tensor<X, int> Tensor_X;
+    typedef topos::Shape<3, 3> X;
+    typedef topos::Tensor<X, int> Tensor_X;
     
     Tensor_X t ([&] (size_t i) {return i;});
     Tensor_X s = t * t - 1;
 
-    std::cout << sum(t2) << std::endl;
+    std::cout << topos::sum(t2) << std::endl;
 }
 ``` 
