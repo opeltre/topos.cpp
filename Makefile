@@ -6,10 +6,10 @@ TARGET=tensor view
 
 all:	tensor view
 
-tensor: main.h
+tensor: topos.h
 	$(CC) tensor.cpp -o tensor $(CFLAGS)
 
-view: 	main.h
+view: 	topos.h
 	$(CC) view.cpp -o view $(CFLAGS)
 
 test:	all

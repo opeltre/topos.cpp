@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "main.h"
+#include "topos.h"
 
 using namespace std;
 using namespace topos;
