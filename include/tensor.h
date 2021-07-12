@@ -4,32 +4,41 @@
 
 namespace topos {
 
-/*------ Tensor ------*/
+template<typename S, typename T, Vector Vec>
+struct MultiDim : public Vec {
 
-template<typename Domain, typename T=dtype> 
-struct Tensor : public Vect<Domain::size, T> {
+    //--- N-dim indexing ---
+    //  
+    //  Given a `Vector V` instance, 
+    //  define a child class MultiDim<shape> of N-ary functions
+    //  with `operator () (size_t i0, ..., size_t iN)`
+    //  returning row-major indexing of the underlying vector.
 
-    using Vect<Domain::size, T>::Vect;
-    using shape = Domain;
+    /*--- Shape type ---*/
+    using Vec::Vec;
+    using shape = S;
     static constexpr index_t dim = shape::dim;
-    static constexpr index_t size = shape::size;
 
-    /* --- Access ---*/
-    
+    /*--- N-ary call ---*/
+
     template<typename ... Is, Indices<shape, Is...> = true>
     T operator () (Is ... is) {
         index_t js [dim] = {static_cast<index_t>(is)...};
-        return this->values[shape::index(js)];
+        return Vec::operator[](shape::index(js));
     }
-
     template<typename Index>
     T operator () (Index js[dim]) {
-        return this->values[shape::index(js)];
+        return Vec::operator[](shape::index(js));
     }
     T operator () (std::initializer_list<index_t> js) {
-        return this->values[shape::index(js)];
+        return Vec::operator[](shape::index(js));
     }
 };
+
+/*------ Tensor ------*/
+
+template<typename S, typename T=dtype> 
+using Tensor = MultiDim<S, T, Vect<S::size, T>>;
 
 /*--- show ---*/
 

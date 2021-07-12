@@ -1,15 +1,31 @@
 namespace topos {
 
-template<typename Domain, typename T=dtype>
-struct View {
+/*------ Tensor views ------ 
 
-    using shape = Domain;
-    static constexpr index_t dim = shape::dim;
-    static constexpr index_t size = shape::size;
+  Tensor views behave like ordinary as tensors for value access,
+  except `view[i]` makes a call to `view.read(i)`. 
+
+  A view is created with the functional constructor 
+  `View(std::function<T(std::size_t)>)`, except the
+  reader function will not be called at creation time
+  but instead may hold a capture of other tensor elements.  
+
+
+  Because they behave like tensors, they are part of
+  the `Vector` concept and inherit the same arithmetic 
+  and functional operations. 
+*/
+
+//--- Vector instance ---
+
+template <index_t n, typename T=dtype>
+struct View1D {
+
+    static constexpr index_t size = n;
 
     /*--- Constructor ---*/
 
-    View (std::function<T(index_t)> f) :
+    View1D (std::function<T(index_t)> f) :
         read (f) {}
     
     std::function<T(index_t)> read;
@@ -19,22 +35,12 @@ struct View {
     T operator [] (index_t i) const {
         return read(i);
     };
-
-    /*--- n-ary Indices ---*/
-
-    template<typename ... Is, Indices<shape, Is...> = true>
-    T operator () (Is ... is) {
-        index_t js [dim] = {static_cast<index_t>(is)...};
-        return this[shape::index(js)];
-    }
-    template<typename Index>
-    T operator () (Index js[dim]) {
-        return this[shape::index(js)];
-    }
-    T operator () (std::initializer_list<index_t> js) {
-        return this[shape::index(js)];
-    }
 };
+
+//--- MultiDim instance ---
+
+template<typename S, typename T=dtype>
+using View = MultiDim<S, T, View1D<S::size, T>>;
 
 template <typename shape, typename T=dtype> 
 std::string to_string (const View<shape,T>& v) {
