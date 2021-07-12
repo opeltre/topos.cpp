@@ -1,19 +1,17 @@
 CC=g++
 CFLAGS=-Wall -Werror -g -std=c++20
+INCLUDE=-I$(PWD)/
 LDFLAGS=
-TARGET=tensor view
+TEST=$(wildcard test/*.cpp)
+TARGET=$(TEST:.cpp=.out)
 
+all:	$(TARGET)
 
-all:	tensor view
-
-tensor: topos.h
-	$(CC) tensor.cpp -o tensor $(CFLAGS)
-
-view: 	topos.h
-	$(CC) view.cpp -o view $(CFLAGS)
+%.out: 	%.cpp
+	$(CC) $< -o $@ $(CFLAGS) $(INCLUDE)
 
 test:	all
-	./tensor && ./view
+	./test/run.sh
 clean:	
 
 mrproper: clean

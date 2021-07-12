@@ -7,7 +7,7 @@ using namespace topos;
 
 int main () {
 
-    const int n=10000;
+    const int n=6;
     typedef double _t;
 
 

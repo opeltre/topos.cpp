@@ -7,12 +7,12 @@ using namespace topos;
 
 int main () {
 
-    typedef Shape<100, 100> D;
+    typedef Shape<3, 3> D;
 
-    cout << "Examples in View (100, 100):" << endl;
+    cout << "Examples in View (3, 3):" << endl;
 
     View <D> v ([&] (size_t i) { return i * i; });
-    log("v = View (100,100) \\i => i * i", v);
+    log("v = View (3,3) \\i => i * i", v);
 
     View <D> s = v + v;
     log("s = v + v", s);
