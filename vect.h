@@ -3,31 +3,29 @@
 #include <string> 
 #include "string.h"
 
-using namespace std;
+namespace topos{
 
-typedef double dtype;
-
-template <size_t n, typename T=dtype> 
+template <index_t n, typename T=dtype> 
 struct Vect {
     
-    static constexpr size_t size = n;
+    static constexpr index_t size = n;
 
     /* --- Constructors --- */
 
     Vect () {
         allocate();
-        cout << "> allocating empty array" << endl;
+        std::cout << "> allocating empty array" << std::endl;
     }
 
-    Vect (initializer_list<T> val) {
+    Vect (std::initializer_list<T> val) {
         allocate();
         copy(val.begin(), val.end(), values);
     }
 
-    Vect (function<T(size_t)> f) {
-        cout << "> mapping" << endl;
+    Vect (std::function<T(index_t)> f) {
+        std::cout << "> mapping" << std::endl;
         allocate();
-        for (size_t i = 0; i < n; i++) {
+        for (index_t i = 0; i < n; i++) {
             values[i] = f(i);
         }
     }
@@ -39,17 +37,17 @@ struct Vect {
     Vect (Vect&& v) {
         values = v.values;
         v.values = nullptr;
-        cout << "> moving" << endl;
+        std::cout << "> moving" << std::endl;
     }
     Vect (Vect& v) {
         allocate();
         memcpy(values, v.values, n * sizeof(T));
-        cout << "> copying" << endl;
+        std::cout << "> copying" << std::endl;
     }
 
     /* --- Copy --- */
     Vect& operator= (Vect v) {
-        cout << "> swapping" << endl;
+        std::cout << "> swapping" << std::endl;
         swap(values, v.values);
         return *this;
     }
@@ -66,36 +64,36 @@ struct Vect {
 
     /* --- Access --- */ 
 
-    T operator [] (size_t i) const {
+    T operator [] (index_t i) const {
         return values[i];
     }
 
     /* --- Iteration --- */ 
 
-    Vect& forEach (function <void(T, size_t)> f) {
-        for (size_t i = 0; i < n; i++) {
+    Vect& forEach (std::function <void(T, index_t)> f) {
+        for (index_t i = 0; i < n; i++) {
             f(values[i], i);
         }
         return *this;
     }
 
-    Vect& fmap (function<T(T)> f) {
-        for (size_t i = 0; i < n; i++) {
+    Vect& fmap (std::function<T(T)> f) {
+        for (index_t i = 0; i < n; i++) {
             values[i] = f(values[i]);
         }
         return *this;
     }
 
-    Vect& map (function<T(T, size_t)> f) {
-        for (size_t i = 0; i < n; i++) {
+    Vect& map (std::function<T(T, index_t)> f) {
+        for (index_t i = 0; i < n; i++) {
             values[i] = f(values[i], i);
         }
         return *this;
     }
     
     template <typename T2=T>
-    Vect& zipWith (Vect<n, T2> b, function<T(T, T2)> f) {
-        for (size_t i = 0; i < n; i++) {
+    Vect& zipWith (Vect<n, T2> b, std::function<T(T, T2)> f) {
+        for (index_t i = 0; i < n; i++) {
             values[i] = f(values[i], b[i]);
         }
         return *this;
@@ -104,45 +102,47 @@ struct Vect {
 
 /* ------ ranges ------ */
 
-template <size_t n, typename T=dtype> 
+template <index_t n, typename T=dtype> 
 Vect<n, T>& range () {
-    return Vect<n, T>([] (size_t i) {return i;});
+    return Vect<n, T>([] (index_t i) {return i;});
 }
 
-template <size_t n, typename T=dtype>
+template <index_t n, typename T=dtype>
 Vect<n, T>& linspace (T x0, T x1) {
     T step = (x1 - x0) / (n - 1);
-    return Vect<n, T>([&] (size_t i) {return x0 + step * i;});
+    return Vect<n, T>([&] (index_t i) {return x0 + step * i;});
 }
 
 /* ------ fmap ------ */ 
 
-template <size_t n, typename S=dtype, typename T=S>
-using F_Vect = function<Vect<n, T> (const Vect<n, S>&)>;
+template <index_t n, typename S=dtype, typename T=S>
+using F_Vect = std::function<Vect<n, T> (const Vect<n, S>&)>;
 
-template <size_t n, typename S=dtype, typename T=S>
-F_Vect<n, S, T> fmap (function<T(S)> f) {
+template <index_t n, typename S=dtype, typename T=S>
+F_Vect<n, S, T> fmap (std::function<T(S)> f) {
     return [&] (const Vect<n, S>& v) {
-        return Vect<n, T> ([&] (size_t i) {return f(v[i]);});
+        return Vect<n, T> ([&] (index_t i) {return f(v[i]);});
     };
 }
 
 /* ------ zipWith ------ */
 
-template <size_t n, typename S1=dtype, typename S2=S1, typename T=S1> 
+template <index_t n, typename S1=dtype, typename S2=S1, typename T=S1> 
 using F2_Vect = 
-    function<Vect<n, T> (const Vect<n, S1>&, const Vect<n, S2>&)>;
+    std::function<Vect<n, T> (const Vect<n, S1>&, const Vect<n, S2>&)>;
 
-template <size_t n, typename S1=dtype, typename S2=S1, typename T=S1> 
-F2_Vect<n, S1, S2, T> zipWith (function<T(S1, S2)> f) {
+template <index_t n, typename S1=dtype, typename S2=S1, typename T=S1> 
+F2_Vect<n, S1, S2, T> zipWith (std::function<T(S1, S2)> f) {
     return [&] (const Vect<n, S1>& v1, const Vect<n, S2>& v2) {
-        return Vect<n, T> ([&] (size_t i) {return f(v1[i], v2[i]);});
+        return Vect<n, T> ([&] (index_t i) {return f(v1[i], v2[i]);});
     };
 }
 
 /* ------ show ------ */ 
 
-template <size_t n, typename T=dtype> 
-string to_string (const Vect<n,T>& v) {
-    return "Vect " + to_string(n) + " " + _str(v);
+template <index_t n, typename T=dtype> 
+std::string to_string (const Vect<n,T>& v) {
+    return "Vect " + std::to_string(n) + " " + _str(v);
 }
+
+}//topos

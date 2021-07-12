@@ -3,11 +3,13 @@
 #include "main.h"
 
 using namespace std;
+using namespace topos;
 
 int main () {
 
     const int n=10000;
     typedef double _t;
+
 
     cout << "Examples in Vect<6>:" << endl;
 
@@ -49,7 +51,6 @@ int main () {
     log("u+w", sum2);
 
     // TENSORS // 
-    
     cout << "Tensors:" << endl << endl;
 
     typedef Shape<3, 3, 3> X;

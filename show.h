@@ -1,26 +1,33 @@
 #include <iostream>
 #include <string>
 
+namespace topos {
+
+template <Vector V> 
+std::string to_string (const V& v);
+
 template<typename Value>
-const Value& log (string s, const Value& v) {
-    cout    << endl
-            << s << endl 
-            << to_string(v) << endl << endl;
+const Value& log (std::string s, const Value& v) {
+    std::cout    << std::endl
+                << s << std::endl 
+                << v << std::endl << std::endl;
     return v;
 };
 
 template <Vector V>
-string _str (const V& v) {
-    size_t n = v.size;
-    string str = "["; 
+std::string _str (const V& v) {
+    index_t n = v.size;
+    std::string str = "["; 
     for (size_t i = 0; i < n; i++) {
-        str += to_string(v[i]);
+        str += std::to_string(v[i]);
         str += (i == n - 1 ?  "]" : ", ");
     }
     return str;
 }
 
 template <Vector V> 
-ostream& operator << (ostream& os, const V& v) {
+std::ostream& operator << (std::ostream& os, const V& v) {
     return os << to_string(v);
 }
+
+}//topos
