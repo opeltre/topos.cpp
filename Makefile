@@ -8,11 +8,14 @@ TARGET=$(TEST:.cpp=.out)
 all:	$(TARGET)
 
 %.out: 	%.cpp
-	$(CC) $< -o $@ $(CFLAGS) $(INCLUDE)
+	$(CC) $< -o $@ $(CFLAGS) $(INCLUDE) 
+
+%.run:	%.out
+	echo '' && ./$< && echo '------' && echo ''
 
 test:	all
-	./test/run.sh
-clean:	
 
-mrproper: clean
-	rm $(TARGET)
+test.run: $(TARGET:.out=.run)
+	
+clean:	
+	rm test/*.out
