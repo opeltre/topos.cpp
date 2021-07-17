@@ -25,8 +25,12 @@ struct View1D {
 
     /*--- Constructor ---*/
 
-    View1D (std::function<T(index_t)> f) :
-        read (f) {}
+    View1D (std::function<T(index_t)> f) 
+        : read (f) {}
+    
+    template <Vector V>
+    View1D (const V& v) 
+        : read ([&] (index_t i) {return v[i];}) {}
     
     std::function<T(index_t)> read;
 
@@ -40,7 +44,7 @@ struct View1D {
 //--- MultiDim instance ---
 
 template<typename S, typename T=dtype>
-using View = MultiDim<S, T, View1D<S::size, T>>;
+using View = MultiDim<S, T, View1D>;
 
 template <typename shape, typename T=dtype> 
 std::string to_string (const View<shape,T>& v) {

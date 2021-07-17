@@ -14,7 +14,7 @@ struct Vect {
 
     Vect () {
         allocate();
-        std::cout << "> allocating empty array" << std::endl;
+        std::cout << "> allocating empty" << std::endl;
     }
 
     Vect (std::initializer_list<T> val) {
@@ -55,6 +55,7 @@ struct Vect {
     /* --- Memory --- */
 
     void allocate () {
+        std::cout << "> allocating" << std::endl;
         values = (T*)malloc(n * sizeof(T));
     }
 

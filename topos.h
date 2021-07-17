@@ -5,5 +5,6 @@
 // -- Instances --
 #include "include/vect.h"
 #include "include/shape.h"
+#include "include/slice.h"
 #include "include/tensor.h"
 #include "include/view.h"
